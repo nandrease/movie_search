@@ -10,6 +10,11 @@ Front-End React, Backend NestJS
 
 ## Deployed
 - Backend (Render): https://movie-search-tq6p.onrender.com/ (auto-deploy on push to `master`)
+- Frontend (GitHub Pages): https://nandrease.github.io/movie_search/ (auto-deploy on push to `master`)
+
+### Frontend notes (GitHub Pages)
+- Frontend calls the backend using `VITE_API_BASE_URL`.
+- In GitHub Actions, set repository secret `VITE_API_BASE_URL` to your Render backend URL.
 
 ## Install
 
