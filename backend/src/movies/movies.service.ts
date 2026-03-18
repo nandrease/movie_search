@@ -4,9 +4,8 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import type { Movie, PagedResponse, TmdbGenre } from './movies.types';
 import type { TmdbMovie, TmdbPagedResponse } from './tmdb.types';
-
-type TmdbGenre = { id: number; name: string };
 
 @Injectable()
 export class MoviesService {
@@ -31,6 +30,40 @@ export class MoviesService {
       );
     }
     return key;
+  }
+
+  private toMovie(tmdbMovie: TmdbMovie): Movie {
+    const releaseYear = tmdbMovie.release_date
+      ? new Date(tmdbMovie.release_date).getFullYear()
+      : Number.NaN;
+    const originalTitleDiffers = tmdbMovie.original_title !== tmdbMovie.title;
+
+    return {
+      id: tmdbMovie.id,
+      title: tmdbMovie.title,
+      ...(originalTitleDiffers
+        ? { originalTitle: tmdbMovie.original_title }
+        : {}),
+      releaseYear: Number.isFinite(releaseYear) ? releaseYear : null,
+      rating: tmdbMovie.vote_average,
+      image: tmdbMovie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${tmdbMovie.poster_path}`
+        : null,
+      ...(originalTitleDiffers
+        ? { language: tmdbMovie.original_language }
+        : {}),
+    };
+  }
+
+  private toPagedMovies(
+    tmdb: TmdbPagedResponse<TmdbMovie>,
+  ): PagedResponse<Movie> {
+    return {
+      page: tmdb.page,
+      results: tmdb.results.map((m) => this.toMovie(m)),
+      totalPages: tmdb.total_pages,
+      totalResults: tmdb.total_results,
+    };
   }
 
   private async getGenres(language = 'en-US'): Promise<TmdbGenre[]> {
@@ -86,7 +119,7 @@ export class MoviesService {
     language?: string;
     originalLanguage?: string;
     genre?: string;
-  }): Promise<TmdbPagedResponse<TmdbMovie>> {
+  }): Promise<PagedResponse<Movie>> {
     try {
       const language = params?.language ?? 'en-US';
       const genre = params?.genre?.trim();
@@ -110,13 +143,15 @@ export class MoviesService {
             },
           });
       const originalLanguage = params?.originalLanguage?.trim();
-      if (!originalLanguage) return data;
-      return {
-        ...data,
-        results: data.results.filter(
-          (m) => m.original_language === originalLanguage,
-        ),
-      };
+      const filtered = originalLanguage
+        ? {
+            ...data,
+            results: data.results.filter(
+              (m) => m.original_language === originalLanguage,
+            ),
+          }
+        : data;
+      return this.toPagedMovies(filtered);
     } catch {
       throw new ServiceUnavailableException('TMDB request failed');
     }
@@ -127,7 +162,7 @@ export class MoviesService {
     page?: number;
     language?: string;
     originalLanguage?: string;
-  }): Promise<TmdbPagedResponse<TmdbMovie>> {
+  }): Promise<PagedResponse<Movie>> {
     try {
       const { data } = await this.tmdb.get<TmdbPagedResponse<TmdbMovie>>(
         '/search/movie',
@@ -142,13 +177,15 @@ export class MoviesService {
         },
       );
       const originalLanguage = params.originalLanguage?.trim();
-      if (!originalLanguage) return data;
-      return {
-        ...data,
-        results: data.results.filter(
-          (m) => m.original_language === originalLanguage,
-        ),
-      };
+      const filtered = originalLanguage
+        ? {
+            ...data,
+            results: data.results.filter(
+              (m) => m.original_language === originalLanguage,
+            ),
+          }
+        : data;
+      return this.toPagedMovies(filtered);
     } catch {
       throw new ServiceUnavailableException('TMDB request failed');
     }
