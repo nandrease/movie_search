@@ -44,6 +44,8 @@ export type PagedResponse<T> = {
 export type Movie = {
   id: number;
   title: string;
+  description: string;
+  genres: string[];
   originalTitle?: string;
   releaseYear: number | null;
   rating: number;

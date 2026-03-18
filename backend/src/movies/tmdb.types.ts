@@ -4,6 +4,7 @@ export type TmdbMovie = {
   original_title: string;
   original_language: string;
   overview: string;
+  genre_ids: number[];
   release_date: string;
   poster_path: string | null;
   backdrop_path: string | null;

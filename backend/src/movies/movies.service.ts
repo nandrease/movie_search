@@ -32,6 +32,17 @@ export class MoviesService {
     return key;
   }
 
+  private async getGenreNameByIdSafe(
+    language = 'en-US',
+  ): Promise<Map<number, string>> {
+    try {
+      const genres = await this.getGenres(language);
+      return new Map(genres.map((g) => [g.id, g.name]));
+    } catch {
+      return new Map();
+    }
+  }
+
   private tmdbErrorMessage(err: unknown): string {
     if (!axios.isAxiosError(err)) return 'TMDB request failed';
     const status = err.response?.status;
@@ -40,15 +51,23 @@ export class MoviesService {
     return 'TMDB request failed';
   }
 
-  private toMovie(tmdbMovie: TmdbMovie): Movie {
+  private toMovie(
+    tmdbMovie: TmdbMovie,
+    genreNameById: Map<number, string>,
+  ): Movie {
     const releaseYear = tmdbMovie.release_date
       ? new Date(tmdbMovie.release_date).getFullYear()
       : Number.NaN;
     const originalTitleDiffers = tmdbMovie.original_title !== tmdbMovie.title;
+    const genres = tmdbMovie.genre_ids
+      .map((id) => genreNameById.get(id))
+      .filter((name): name is string => typeof name === 'string');
 
     return {
       id: tmdbMovie.id,
       title: tmdbMovie.title,
+      description: tmdbMovie.overview,
+      genres,
       ...(originalTitleDiffers
         ? { originalTitle: tmdbMovie.original_title }
         : {}),
@@ -65,10 +84,11 @@ export class MoviesService {
 
   private toPagedMovies(
     tmdb: TmdbPagedResponse<TmdbMovie>,
+    genreNameById: Map<number, string>,
   ): PagedResponse<Movie> {
     return {
       page: tmdb.page,
-      results: tmdb.results.map((m) => this.toMovie(m)),
+      results: tmdb.results.map((m) => this.toMovie(m, genreNameById)),
       totalPages: tmdb.total_pages,
       totalResults: tmdb.total_results,
     };
@@ -159,7 +179,8 @@ export class MoviesService {
             ),
           }
         : data;
-      return this.toPagedMovies(filtered);
+      const genreNameById = await this.getGenreNameByIdSafe(language);
+      return this.toPagedMovies(filtered, genreNameById);
     } catch (err) {
       throw new ServiceUnavailableException(this.tmdbErrorMessage(err));
     }
@@ -193,7 +214,10 @@ export class MoviesService {
             ),
           }
         : data;
-      return this.toPagedMovies(filtered);
+      const genreNameById = await this.getGenreNameByIdSafe(
+        params.language ?? 'en-US',
+      );
+      return this.toPagedMovies(filtered, genreNameById);
     } catch (err) {
       throw new ServiceUnavailableException(this.tmdbErrorMessage(err));
     }
