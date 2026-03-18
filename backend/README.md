@@ -31,6 +31,9 @@ Create `backend/.env` (or copy `backend/.env.example`) and set:
 
 - `TMDB_API_KEY=...`
 
+## Deployed
+- Backend (Render): <https://movie-search-tq6p.onrender.com/> (auto-deploy on push to `master`)
+
 ## API endpoints
 
 Base URL (default): `http://localhost:3000`

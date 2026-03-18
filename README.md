@@ -8,6 +8,9 @@ Front-End React, Backend NestJS
 - `backend/`: NestJS API
 - `frontend/`: React (Vite) app
 
+## Deployed
+- Backend (Render): https://movie-search-tq6p.onrender.com/ (auto-deploy on push to `master`)
+
 ## Install
 
 ```bash
