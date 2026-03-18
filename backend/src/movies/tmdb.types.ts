@@ -18,3 +18,8 @@ export type TmdbPagedResponse<T> = {
   total_pages: number;
   total_results: number;
 };
+
+export type TmdbGenre = {
+  id: number;
+  name: string;
+};

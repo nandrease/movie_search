@@ -54,6 +54,31 @@ Base URL (default): `http://localhost:3000`
     - `GET /movies/search?query=batman`
     - `GET /movies/search?query=batman&original_language=en`
 
+## Response schema
+
+Both `/movies` and `/movies/search` return a paged response:
+
+```ts
+type PagedResponse<T> = {
+  page: number;
+  results: T[];
+  totalPages: number;
+  totalResults: number;
+};
+
+type Movie = {
+  id: number;
+  title: string;
+  originalTitle?: string;
+  releaseYear: number | null;
+  rating: number;
+  image: string | null;
+  language?: string;
+};
+```
+
+`originalTitle` and `language` are only returned when `originalTitle !== title`.
+
 ## Project setup
 
 ```bash

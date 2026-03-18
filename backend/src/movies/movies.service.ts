@@ -4,8 +4,8 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
-import type { Movie, PagedResponse, TmdbGenre } from './movies.types';
-import type { TmdbMovie, TmdbPagedResponse } from './tmdb.types';
+import type { Movie, PagedResponse } from './movies.types';
+import type { TmdbMovie, TmdbPagedResponse, TmdbGenre } from './tmdb.types';
 
 @Injectable()
 export class MoviesService {
@@ -30,6 +30,14 @@ export class MoviesService {
       );
     }
     return key;
+  }
+
+  private tmdbErrorMessage(err: unknown): string {
+    if (!axios.isAxiosError(err)) return 'TMDB request failed';
+    const status = err.response?.status;
+    if (status) return `TMDB request failed (status ${status})`;
+    if (err.code) return `TMDB request failed (${err.code})`;
+    return 'TMDB request failed';
   }
 
   private toMovie(tmdbMovie: TmdbMovie): Movie {
@@ -88,8 +96,8 @@ export class MoviesService {
         expiresAt: now + 6 * 60 * 60 * 1000,
       });
       return genres;
-    } catch {
-      throw new ServiceUnavailableException('TMDB request failed');
+    } catch (err) {
+      throw new ServiceUnavailableException(this.tmdbErrorMessage(err));
     }
   }
 
@@ -152,8 +160,8 @@ export class MoviesService {
           }
         : data;
       return this.toPagedMovies(filtered);
-    } catch {
-      throw new ServiceUnavailableException('TMDB request failed');
+    } catch (err) {
+      throw new ServiceUnavailableException(this.tmdbErrorMessage(err));
     }
   }
 
@@ -186,8 +194,8 @@ export class MoviesService {
           }
         : data;
       return this.toPagedMovies(filtered);
-    } catch {
-      throw new ServiceUnavailableException('TMDB request failed');
+    } catch (err) {
+      throw new ServiceUnavailableException(this.tmdbErrorMessage(err));
     }
   }
 }

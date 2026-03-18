@@ -14,8 +14,3 @@ export type PagedResponse<T> = {
   totalPages: number;
   totalResults: number;
 };
-
-export type TmdbGenre = {
-  id: number;
-  name: string;
-};

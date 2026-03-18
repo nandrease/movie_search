@@ -30,3 +30,25 @@ npm create vite@latest frontend -- --template react-ts
   - **examples**:
     - `/movies/search?query=batman`
     - `/movies/search?query=batman&original_language=en`
+
+### Backend data transformations
+API returns movies in a paged response:
+```
+export type PagedResponse<T> = {
+  page: number;
+  results: T[];
+  totalPages: number;
+  totalResults: number;
+};
+
+export type Movie = {
+  id: number;
+  title: string;
+  originalTitle?: string;
+  releaseYear: number | null;
+  rating: number;
+  image: string | null;
+  language?: string;
+};
+```
+`originalTitle` and `language` are only returned when they differ from title
