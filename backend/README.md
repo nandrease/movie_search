@@ -25,6 +25,35 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Environment
+
+Create `backend/.env` (or copy `backend/.env.example`) and set:
+
+- `TMDB_API_KEY=...`
+
+## API endpoints
+
+Base URL (default): `http://localhost:3000`
+
+- **GET `/`**: health check (`Hello World!`)
+- **GET `/movies`**: popular movies (TMDB)
+  - **query params**:
+    - `page` (number)
+    - `language` (TMDB response language, e.g. `en-US`)
+    - `original_language` (filter results by original language, e.g. `en`, `ja`)
+    - `genre` (genre name like `action` or TMDB genre id like `28`)
+  - **examples**:
+    - `GET /movies`
+    - `GET /movies?page=2`
+    - `GET /movies?genre=action`
+    - `GET /movies?genre=28&original_language=ja`
+- **GET `/movies/search`**: search movies (TMDB)
+  - **required query params**: `query`
+  - **optional query params**: `page`, `language`, `original_language`
+  - **examples**:
+    - `GET /movies/search?query=batman`
+    - `GET /movies/search?query=batman&original_language=en`
+
 ## Project setup
 
 ```bash
