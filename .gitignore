@@ -1,11 +1,20 @@
-# Nestjs specific
-/dist
-/node_modules
-/build
-/tmp
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+**/out/
+
+# NestJS / TypeScript caches
+**/.nestjs/
+**/*.tsbuildinfo
+
+# Vite cache
+**/.vite/
 
 # Logs
-logs
+**/logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -15,10 +24,22 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
+.env.*
+.env.*.local
 .env.development
 .env.test
 .env.production
 
-# temp directory
-.temp
-.tmp
+# Test / coverage
+**/coverage/
+
+# Temp
+**/.temp/
+**/.tmp/
+**/tmp/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
