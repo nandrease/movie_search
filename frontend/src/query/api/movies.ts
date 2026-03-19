@@ -1,5 +1,5 @@
 import type { Movie, PagedResponse } from './types'
-import { interceptAsyncRequest } from '../interceptors/requestInterceptor'
+import { interceptAsyncRequest } from '../requestTiming/requestInterceptor'
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.toString() || 'http://localhost:3000'

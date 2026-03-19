@@ -1,11 +1,10 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
-import { fetchMovies, searchMovies } from '../api/movies'
-import type { Movie } from '../api/types'
+import type { Movie } from '../query/api/types'
 import MovieCard from '../components/MovieCard'
 import RecentSearchesSidebar from '../components/RecentSearchesSidebar'
 import SearchFiltersForm from '../components/SearchFiltersForm'
 import { useRecentSearches } from '../hooks/useRecentSearches'
+import { useMoviesQuery } from '../query/useMoviesQuery'
 import styles from './MoviesSearchPage.module.css'
 
 export default function MoviesSearchPage() {
@@ -44,34 +43,12 @@ export default function MoviesSearchPage() {
     })
   }
 
-  const q = useQuery({
-    queryKey: [
-      'movies',
-      {
-        mode,
-        query: effectiveQuery,
-        page,
-        genre: effectiveGenre,
-        original_language: effectiveOriginalLanguage,
-      },
-    ],
-    queryFn: async () => {
-      if (mode === 'search') {
-        return await searchMovies({
-          query: effectiveQuery,
-          page,
-          originalLanguage: effectiveOriginalLanguage,
-        })
-      }
-
-      return await fetchMovies({
-        page,
-        genre: effectiveGenre,
-        originalLanguage: effectiveOriginalLanguage,
-      })
-    },
-    placeholderData: keepPreviousData,
-    staleTime: 10_000,
+  const q = useMoviesQuery({
+    mode,
+    query: effectiveQuery,
+    page,
+    genre: effectiveGenre,
+    originalLanguage: effectiveOriginalLanguage,
   })
 
   const data = q.data

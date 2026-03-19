@@ -1,4 +1,4 @@
-import type { Movie } from '../../api/types'
+import type { Movie } from '../../query/api/types'
 import styles from './MovieCard.module.css'
 
 export type MovieCardProps = {
