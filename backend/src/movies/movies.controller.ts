@@ -5,6 +5,12 @@ import { MoviesService } from './movies.service';
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
+  // GET /movies/genres
+  @Get('genres')
+  getGenres(@Query('language') language?: string) {
+    return this.moviesService.getMovieGenres({ language });
+  }
+
   // GET /movies
   @Get()
   getMovies(

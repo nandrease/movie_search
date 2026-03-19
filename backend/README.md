@@ -66,6 +66,28 @@ Examples:
 - `/movies/search?query=batman`
 - `/movies/search?query=batman&original_language=en`
 
+### `GET /movies/genres`
+
+Returns official TMDB movie genres.
+
+Optional query params:
+
+- `language` (e.g. `en-US`)
+
+Examples:
+
+- `/movies/genres`
+- `/movies/genres?language=en-US`
+
+Response:
+
+```ts
+type MovieGenre = {
+  id: number
+  name: string
+}
+```
+
 ## Response shape
 
 Both `/movies` and `/movies/search` return:

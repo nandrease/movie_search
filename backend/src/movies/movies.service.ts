@@ -142,6 +142,20 @@ export class MoviesService {
     return match.id;
   }
 
+  async getMovieGenres(params?: { language?: string }): Promise<
+    {
+      id: number;
+      name: string;
+    }[]
+  > {
+    const language = params?.language ?? 'en-US';
+    const genres = await this.getGenres(language);
+    return genres.map((genre) => ({
+      id: genre.id,
+      name: genre.name,
+    }));
+  }
+
   async getPopular(params?: {
     page?: number;
     language?: string;
