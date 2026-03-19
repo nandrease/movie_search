@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { fetchMovies, searchMovies } from '../api/movies'
 import type { Movie } from '../api/types'
 import MovieCard from '../components/MovieCard'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 
 export default function MoviesSearchPage() {
   const [query, setQuery] = useState('')
@@ -11,8 +12,17 @@ export default function MoviesSearchPage() {
   const [page, setPage] = useState(1)
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null)
 
-  const mode = query.trim() ? 'search' : 'popular'
-  const effectiveQuery = useMemo(() => query.trim(), [query])
+  const debouncedQuery = useDebouncedValue(query, 400)
+  const debouncedGenre = useDebouncedValue(genre, 400)
+  const debouncedOriginalLanguage = useDebouncedValue(originalLanguage, 400)
+
+  const mode = debouncedQuery.trim() ? 'search' : 'popular'
+  const effectiveQuery = useMemo(() => debouncedQuery.trim(), [debouncedQuery])
+  const effectiveGenre = useMemo(() => debouncedGenre.trim() || undefined, [debouncedGenre])
+  const effectiveOriginalLanguage = useMemo(
+    () => debouncedOriginalLanguage.trim() || undefined,
+    [debouncedOriginalLanguage],
+  )
 
   const q = useQuery({
     queryKey: [
@@ -21,25 +31,23 @@ export default function MoviesSearchPage() {
         mode,
         query: effectiveQuery,
         page,
-        genre: genre.trim() || undefined,
-        original_language: originalLanguage.trim() || undefined,
+        genre: effectiveGenre,
+        original_language: effectiveOriginalLanguage,
       },
     ],
     queryFn: async () => {
-      const originalLang = originalLanguage.trim() || undefined
-
       if (mode === 'search') {
         return await searchMovies({
           query: effectiveQuery,
           page,
-          originalLanguage: originalLang,
+          originalLanguage: effectiveOriginalLanguage,
         })
       }
 
       return await fetchMovies({
         page,
-        genre: genre.trim() || undefined,
-        originalLanguage: originalLang,
+        genre: effectiveGenre,
+        originalLanguage: effectiveOriginalLanguage,
       })
     },
     placeholderData: keepPreviousData,
