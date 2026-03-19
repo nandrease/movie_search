@@ -1,8 +1,8 @@
 # Movie Search
-Frontend: React (Vite + TypeScript)
-Backend: NestJS (TypeScript)
-[Live demo](https://nandrease.github.io/movie_search/)
-Note: The first request can be slow because the backend runs on a free Render instance and may need a cold start.
+- Frontend: React (Vite + TypeScript)
+- Backend: NestJS (TypeScript)
+- [Live demo](https://nandrease.github.io/movie_search/)
+- Note: The first request can be slow because the backend runs on a free Render instance and may need a cold start.
 
 ## Prereqs
 - Node.js (LTS recommended)
