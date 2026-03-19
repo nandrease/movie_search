@@ -1,3 +1,4 @@
+import FilterInputField from './FilterInputField'
 import styles from './SearchFiltersForm.module.css'
 
 type SearchFiltersFormProps = {
@@ -19,12 +20,6 @@ export default function SearchFiltersForm({
   onOriginalLanguageChange,
   onSubmit,
 }: Readonly<SearchFiltersFormProps>) {
-  function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key !== 'Enter') return
-    e.preventDefault()
-    onSubmit()
-  }
-
   return (
     <form
       className={styles.controls}
@@ -42,43 +37,31 @@ export default function SearchFiltersForm({
         }
       }}
     >
-      <label className={styles.field}>
-        <span>Search</span>
-        <input
-          value={query}
-          onKeyDown={handleInputKeyDown}
-          onChange={(e) => {
-            onQueryChange(e.target.value)
-          }}
-          placeholder="Batman, Inception, ..."
-        />
-      </label>
+      <FilterInputField
+        label="Search"
+        value={query}
+        placeholder="Batman, Inception, ..."
+        onChange={onQueryChange}
+        onEnter={onSubmit}
+      />
 
-      <label className={styles.field}>
-        <span>Genre (popular only)</span>
-        <input
-          value={genre}
-          onKeyDown={handleInputKeyDown}
-          onChange={(e) => {
-            onGenreChange(e.target.value)
-          }}
-          placeholder="action or 28"
-          disabled={query.trim().length > 0}
-        />
-      </label>
+      <FilterInputField
+        label="Genre (popular only)"
+        value={genre}
+        placeholder="action or 28"
+        onChange={onGenreChange}
+        onEnter={onSubmit}
+        disabled={query.trim().length > 0}
+      />
 
-      <label className={styles.field}>
-        <span>Original language</span>
-        <input
-          value={originalLanguage}
-          onKeyDown={handleInputKeyDown}
-          onChange={(e) => {
-            onOriginalLanguageChange(e.target.value)
-          }}
-          placeholder="en, ja, ko..."
-          maxLength={5}
-        />
-      </label>
+      <FilterInputField
+        label="Original language"
+        value={originalLanguage}
+        placeholder="en, ja, ko..."
+        onChange={onOriginalLanguageChange}
+        onEnter={onSubmit}
+        maxLength={5}
+      />
     </form>
   )
 }
