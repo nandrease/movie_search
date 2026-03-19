@@ -4,34 +4,44 @@ import { fetchMovies, searchMovies } from '../api/movies'
 import type { Movie } from '../api/types'
 import MovieCard from '../components/MovieCard'
 import RecentSearchesSidebar from '../components/RecentSearchesSidebar'
-import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import SearchFiltersForm from '../components/SearchFiltersForm'
 import { useRecentSearches } from '../hooks/useRecentSearches'
 
 export default function MoviesSearchPage() {
   const [query, setQuery] = useState('')
   const [genre, setGenre] = useState('')
   const [originalLanguage, setOriginalLanguage] = useState('')
+  const [appliedFilters, setAppliedFilters] = useState({
+    query: '',
+    genre: '',
+    originalLanguage: '',
+  })
   const [page, setPage] = useState(1)
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null)
   const { items: recentSearches, push: pushRecentSearch, clear: clearRecentSearches } =
     useRecentSearches('movie-search:recent-searches', 5)
 
-  const debouncedQuery = useDebouncedValue(query, 400)
-  const debouncedGenre = useDebouncedValue(genre, 400)
-  const debouncedOriginalLanguage = useDebouncedValue(originalLanguage, 400)
-
-  const mode = debouncedQuery.trim() ? 'search' : 'popular'
-  const effectiveQuery = useMemo(() => debouncedQuery.trim(), [debouncedQuery])
-  const effectiveGenre = useMemo(() => debouncedGenre.trim() || undefined, [debouncedGenre])
+  const mode = appliedFilters.query.trim() ? 'search' : 'popular'
+  const effectiveQuery = useMemo(() => appliedFilters.query.trim(), [appliedFilters.query])
+  const effectiveGenre = useMemo(() => appliedFilters.genre.trim() || undefined, [appliedFilters.genre])
   const effectiveOriginalLanguage = useMemo(
-    () => debouncedOriginalLanguage.trim() || undefined,
-    [debouncedOriginalLanguage],
+    () => appliedFilters.originalLanguage.trim() || undefined,
+    [appliedFilters.originalLanguage],
   )
 
   useEffect(() => {
     if (!effectiveQuery) return
     pushRecentSearch(effectiveQuery)
   }, [effectiveQuery, pushRecentSearch])
+
+  function applyFilters() {
+    setPage(1)
+    setAppliedFilters({
+      query,
+      genre,
+      originalLanguage,
+    })
+  }
 
   const q = useQuery({
     queryKey: [
@@ -93,45 +103,15 @@ export default function MoviesSearchPage() {
           </p>
         </div>
 
-        <div className="controls">
-          <label className="field">
-            <span>Search</span>
-            <input
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value)
-                setPage(1)
-              }}
-              placeholder="Batman, Inception, ..."
-            />
-          </label>
-
-          <label className="field">
-            <span>Genre (popular only)</span>
-            <input
-              value={genre}
-              onChange={(e) => {
-                setGenre(e.target.value)
-                setPage(1)
-              }}
-              placeholder="action or 28"
-              disabled={mode === 'search'}
-            />
-          </label>
-
-          <label className="field">
-            <span>Original language</span>
-            <input
-              value={originalLanguage}
-              onChange={(e) => {
-                setOriginalLanguage(e.target.value)
-                setPage(1)
-              }}
-              placeholder="en, ja, ko..."
-              maxLength={5}
-            />
-          </label>
-        </div>
+        <SearchFiltersForm
+          query={query}
+          genre={genre}
+          originalLanguage={originalLanguage}
+          onQueryChange={setQuery}
+          onGenreChange={setGenre}
+          onOriginalLanguageChange={setOriginalLanguage}
+          onSubmit={applyFilters}
+        />
 
         <div className="meta">
           <div className="metaLeft">
@@ -163,6 +143,11 @@ export default function MoviesSearchPage() {
                 setGenre('')
                 setOriginalLanguage('')
                 setPage(1)
+                setAppliedFilters({
+                  query: '',
+                  genre: '',
+                  originalLanguage: '',
+                })
                 setActiveMovieId(null)
               }}
               disabled={q.isFetching}
@@ -186,6 +171,10 @@ export default function MoviesSearchPage() {
           onApply={(term) => {
             setQuery(term)
             setPage(1)
+            setAppliedFilters((prev) => ({
+              ...prev,
+              query: term,
+            }))
           }}
         />
 
