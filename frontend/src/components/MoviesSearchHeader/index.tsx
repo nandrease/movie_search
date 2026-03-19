@@ -6,10 +6,11 @@ type MoviesSearchHeaderProps = {
   query: string
   genre: string
   originalLanguage: string
+  genreSuggestions: string[]
   onQueryChange: (value: string) => void
   onGenreChange: (value: string) => void
   onOriginalLanguageChange: (value: string) => void
-  onSubmit: () => void
+  onSubmit: (overrides?: Partial<{ query: string; genre: string; originalLanguage: string }>) => void
 }
 
 export default function MoviesSearchHeader({
@@ -17,6 +18,7 @@ export default function MoviesSearchHeader({
   query,
   genre,
   originalLanguage,
+  genreSuggestions,
   onQueryChange,
   onGenreChange,
   onOriginalLanguageChange,
@@ -38,6 +40,7 @@ export default function MoviesSearchHeader({
         query={query}
         genre={genre}
         originalLanguage={originalLanguage}
+        genreSuggestions={genreSuggestions}
         onQueryChange={onQueryChange}
         onGenreChange={onGenreChange}
         onOriginalLanguageChange={onOriginalLanguageChange}

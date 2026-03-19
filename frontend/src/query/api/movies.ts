@@ -1,4 +1,4 @@
-import type { Movie, PagedResponse } from './types'
+import type { Movie, MovieGenre, PagedResponse } from './types'
 import { interceptAsyncRequest } from '../requestTiming/requestInterceptor'
 
 const API_BASE_URL =
@@ -53,6 +53,17 @@ export async function searchMovies(params: {
   })
   return await interceptAsyncRequest('movies/search', async () => {
     return await requestJson<PagedResponse<Movie>>(url)
+  })
+}
+
+export async function fetchMovieGenres(params?: {
+  language?: string
+}): Promise<MovieGenre[]> {
+  const url = buildUrl('/movies/genres', {
+    language: params?.language,
+  })
+  return await interceptAsyncRequest('movies/genres', async () => {
+    return await requestJson<MovieGenre[]>(url)
   })
 }
 

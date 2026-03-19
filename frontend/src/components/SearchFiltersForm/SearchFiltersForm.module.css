@@ -15,7 +15,8 @@
   color: var(--text);
 }
 
-.field input {
+.field input,
+.field select {
   font: 16px/1.2 var(--sans);
   padding: 10px 12px;
   border-radius: 10px;
@@ -24,8 +25,9 @@
   color: var(--text-h);
 }
 
-.field input:disabled {
-  opacity: 0.6;
+.field input:disabled,
+.field select:disabled {
+  opacity: 0.3;
 }
 
 @media (max-width: 1024px) {

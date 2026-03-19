@@ -4,6 +4,7 @@ import MoviesSearchMetaBar from '../components/MoviesSearchMetaBar'
 import MoviesResultsGrid from '../components/MoviesResultsGrid'
 import RecentSearchesSidebar from '../components/RecentSearchesSidebar'
 import { useRecentSearches } from '../hooks/useRecentSearches'
+import { useMovieGenresQuery } from '../query/useMovieGenresQuery'
 import { useMoviesQuery } from '../query/useMoviesQuery'
 import styles from './MoviesSearchPage.module.css'
 
@@ -34,12 +35,16 @@ export default function MoviesSearchPage() {
     pushRecentSearch(effectiveQuery)
   }, [effectiveQuery, pushRecentSearch])
 
-  function applyFilters() {
+  function applyFilters(overrides?: Partial<{ query: string; genre: string; originalLanguage: string }>) {
+    const nextQuery = overrides?.query ?? query
+    const nextGenre = overrides?.genre ?? genre
+    const nextOriginalLanguage = overrides?.originalLanguage ?? originalLanguage
+
     setPage(1)
     setAppliedFilters({
-      query,
-      genre,
-      originalLanguage,
+      query: nextQuery,
+      genre: nextGenre,
+      originalLanguage: nextOriginalLanguage,
     })
   }
 
@@ -50,6 +55,7 @@ export default function MoviesSearchPage() {
     genre: effectiveGenre,
     originalLanguage: effectiveOriginalLanguage,
   })
+  const genresQuery = useMovieGenresQuery()
 
   const data = q.data
   const results = data?.results ?? []
@@ -77,6 +83,7 @@ export default function MoviesSearchPage() {
           query={query}
           genre={genre}
           originalLanguage={originalLanguage}
+          genreSuggestions={(genresQuery.data ?? []).map((genreItem) => genreItem.name)}
           onQueryChange={setQuery}
           onGenreChange={setGenre}
           onOriginalLanguageChange={setOriginalLanguage}

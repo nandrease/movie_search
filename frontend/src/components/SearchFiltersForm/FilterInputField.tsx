@@ -3,6 +3,7 @@ import styles from './SearchFiltersForm.module.css'
 
 type FilterInputFieldProps = {
   label: string
+  name: string
   value: string
   placeholder: string
   onChange: (value: string) => void
@@ -13,6 +14,7 @@ type FilterInputFieldProps = {
 
 export default function FilterInputField({
   label,
+  name,
   value,
   placeholder,
   onChange,
@@ -30,6 +32,7 @@ export default function FilterInputField({
     <label className={styles.field}>
       <span>{label}</span>
       <input
+        name={name}
         value={value}
         onKeyDown={handleInputKeyDown}
         onChange={(e) => {
@@ -38,6 +41,7 @@ export default function FilterInputField({
         placeholder={placeholder}
         disabled={disabled}
         maxLength={maxLength}
+        autoComplete="off"
       />
     </label>
   )

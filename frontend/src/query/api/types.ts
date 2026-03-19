@@ -17,3 +17,8 @@ export type PagedResponse<T> = {
   totalResults: number
 }
 
+export type MovieGenre = {
+  id: number
+  name: string
+}
+
