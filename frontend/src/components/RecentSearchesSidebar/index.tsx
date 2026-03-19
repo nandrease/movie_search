@@ -1,3 +1,5 @@
+import styles from './RecentSearchesSidebar.module.css'
+
 type RecentSearchesSidebarProps = {
   items: string[]
   onApply: (term: string) => void
@@ -10,12 +12,12 @@ export default function RecentSearchesSidebar({
   onClear,
 }: Readonly<RecentSearchesSidebarProps>) {
   return (
-    <aside className="sidebar">
-      <div className="sidebarHeader">
+    <aside className={styles.sidebar}>
+      <div className={styles.sidebarHeader}>
         <h2>Recent Searches</h2>
         <button
           type="button"
-          className="btn ghost"
+          className={styles.btn}
           onClick={onClear}
           disabled={!items.length}
         >
@@ -23,12 +25,12 @@ export default function RecentSearchesSidebar({
         </button>
       </div>
       {items.length ? (
-        <ul className="recentList">
+        <ul className={styles.recentList}>
           {items.map((term) => (
             <li key={term}>
               <button
                 type="button"
-                className="recentBtn"
+                className={styles.recentBtn}
                 onClick={() => onApply(term)}
               >
                 {term}
@@ -37,7 +39,7 @@ export default function RecentSearchesSidebar({
           ))}
         </ul>
       ) : (
-        <div className="empty small">No recent searches yet.</div>
+        <div className={styles.emptySmall}>No recent searches yet.</div>
       )}
     </aside>
   )

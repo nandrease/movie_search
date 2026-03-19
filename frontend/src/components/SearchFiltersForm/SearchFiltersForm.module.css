@@ -1,0 +1,36 @@
+.controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field span {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.field input {
+  font: 16px/1.2 var(--sans);
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.field input:disabled {
+  opacity: 0.6;
+}
+
+@media (max-width: 1024px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,3 +1,5 @@
+import styles from './SearchFiltersForm.module.css'
+
 type SearchFiltersFormProps = {
   query: string
   genre: string
@@ -25,7 +27,7 @@ export default function SearchFiltersForm({
 
   return (
     <form
-      className="controls"
+      className={styles.controls}
       onSubmit={(e) => {
         e.preventDefault()
         onSubmit()
@@ -40,7 +42,7 @@ export default function SearchFiltersForm({
         }
       }}
     >
-      <label className="field">
+      <label className={styles.field}>
         <span>Search</span>
         <input
           value={query}
@@ -52,7 +54,7 @@ export default function SearchFiltersForm({
         />
       </label>
 
-      <label className="field">
+      <label className={styles.field}>
         <span>Genre (popular only)</span>
         <input
           value={genre}
@@ -65,7 +67,7 @@ export default function SearchFiltersForm({
         />
       </label>
 
-      <label className="field">
+      <label className={styles.field}>
         <span>Original language</span>
         <input
           value={originalLanguage}

@@ -6,6 +6,7 @@ import MovieCard from '../components/MovieCard'
 import RecentSearchesSidebar from '../components/RecentSearchesSidebar'
 import SearchFiltersForm from '../components/SearchFiltersForm'
 import { useRecentSearches } from '../hooks/useRecentSearches'
+import styles from './MoviesSearchPage.module.css'
 
 export default function MoviesSearchPage() {
   const [query, setQuery] = useState('')
@@ -92,11 +93,11 @@ export default function MoviesSearchPage() {
   }, [mode, q.isFetching])
 
   return (
-    <div className="app">
-      <header className="header">
-        <div className="title">
+    <div className={styles.app}>
+      <header className={styles.header}>
+        <div className={styles.title}>
           <h1>Movie Search</h1>
-          <p className="subtitle">
+          <p className={styles.subtitle}>
             {mode === 'search'
               ? 'Search TMDB via your Nest backend'
               : 'Browse popular movies via your Nest backend'}
@@ -113,31 +114,31 @@ export default function MoviesSearchPage() {
           onSubmit={applyFilters}
         />
 
-        <div className="meta">
-          <div className="metaLeft">
-            <span className={`pill${q.isError ? ' error' : ''}`}>
+        <div className={styles.meta}>
+          <div className={styles.metaLeft}>
+            <span className={[styles.pill, q.isError ? styles.pillError : ''].join(' ').trim()}>
               {resultsLabel}
             </span>
-            {data ? <span className="pill subtle">Page {data.page}</span> : null}
+            {data ? <span className={`${styles.pill} ${styles.pillSubtle}`}>Page {data.page}</span> : null}
           </div>
 
-          <div className="metaRight">
+          <div className={styles.metaRight}>
             <button
-              className="btn"
+              className={styles.btn}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={!canPrev}
             >
               Prev
             </button>
             <button
-              className="btn"
+              className={styles.btn}
               onClick={() => setPage((p) => p + 1)}
               disabled={!canNext}
             >
               Next
             </button>
             <button
-              className="btn ghost"
+              className={`${styles.btn} ${styles.btnGhost}`}
               onClick={() => {
                 setQuery('')
                 setGenre('')
@@ -159,12 +160,12 @@ export default function MoviesSearchPage() {
       </header>
 
       {q.isError ? (
-        <div className="errorBox">
+        <div className={styles.errorBox}>
           {q.error instanceof Error ? q.error.message : 'Request failed'}
         </div>
       ) : null}
 
-      <div className="content">
+      <div className={styles.content}>
         <RecentSearchesSidebar
           items={recentSearches}
           onClear={clearRecentSearches}
@@ -178,7 +179,7 @@ export default function MoviesSearchPage() {
           }}
         />
 
-        <main className="grid">
+        <main className={styles.grid}>
           {results.length ? (
             results.map((m: Movie) => (
               <MovieCard
@@ -191,7 +192,7 @@ export default function MoviesSearchPage() {
               />
             ))
           ) : (
-            <div className="empty">{emptyLabel}</div>
+            <div className={styles.empty}>{emptyLabel}</div>
           )}
         </main>
       </div>

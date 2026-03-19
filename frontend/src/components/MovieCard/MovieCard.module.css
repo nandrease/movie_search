@@ -1,0 +1,112 @@
+.card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+}
+
+.poster {
+  aspect-ratio: 2 / 3;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.posterPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.cardBody {
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--text-h);
+}
+
+.rating {
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.cardSub {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.cardGenres {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+.cardDescription {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--text);
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.expanded .cardDescription {
+  max-height: 100%;
+  opacity: 1;
+  margin-top: 2px;
+}
+
+.lang {
+  margin-left: 6px;
+  opacity: 0.85;
+}
+
+.cardMeta {
+  font-size: 12px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  opacity: 0.7;
+}
+
