@@ -1,9 +1,11 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { fetchMovies, searchMovies } from '../api/movies'
 import type { Movie } from '../api/types'
 import MovieCard from '../components/MovieCard'
+import RecentSearchesSidebar from '../components/RecentSearchesSidebar'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { useRecentSearches } from '../hooks/useRecentSearches'
 
 export default function MoviesSearchPage() {
   const [query, setQuery] = useState('')
@@ -11,6 +13,8 @@ export default function MoviesSearchPage() {
   const [originalLanguage, setOriginalLanguage] = useState('')
   const [page, setPage] = useState(1)
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null)
+  const { items: recentSearches, push: pushRecentSearch, clear: clearRecentSearches } =
+    useRecentSearches('movie-search:recent-searches', 5)
 
   const debouncedQuery = useDebouncedValue(query, 400)
   const debouncedGenre = useDebouncedValue(genre, 400)
@@ -23,6 +27,11 @@ export default function MoviesSearchPage() {
     () => debouncedOriginalLanguage.trim() || undefined,
     [debouncedOriginalLanguage],
   )
+
+  useEffect(() => {
+    if (!effectiveQuery) return
+    pushRecentSearch(effectiveQuery)
+  }, [effectiveQuery, pushRecentSearch])
 
   const q = useQuery({
     queryKey: [
@@ -170,22 +179,33 @@ export default function MoviesSearchPage() {
         </div>
       ) : null}
 
-      <main className="grid">
-        {results.length ? (
-          results.map((m: Movie) => (
-            <MovieCard
-              key={m.id}
-              movie={m}
-              active={activeMovieId === m.id}
-              onToggle={() =>
-                setActiveMovieId((cur) => (cur === m.id ? null : m.id))
-              }
-            />
-          ))
-        ) : (
-          <div className="empty">{emptyLabel}</div>
-        )}
-      </main>
+      <div className="content">
+        <RecentSearchesSidebar
+          items={recentSearches}
+          onClear={clearRecentSearches}
+          onApply={(term) => {
+            setQuery(term)
+            setPage(1)
+          }}
+        />
+
+        <main className="grid">
+          {results.length ? (
+            results.map((m: Movie) => (
+              <MovieCard
+                key={m.id}
+                movie={m}
+                active={activeMovieId === m.id}
+                onToggle={() =>
+                  setActiveMovieId((cur) => (cur === m.id ? null : m.id))
+                }
+              />
+            ))
+          ) : (
+            <div className="empty">{emptyLabel}</div>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
