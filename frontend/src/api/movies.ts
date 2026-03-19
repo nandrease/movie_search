@@ -1,4 +1,5 @@
 import type { Movie, PagedResponse } from './types'
+import { interceptAsyncRequest } from '../interceptors/requestInterceptor'
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.toString() || 'http://localhost:3000'
@@ -33,7 +34,9 @@ export async function fetchMovies(params: {
     original_language: params.originalLanguage,
     genre: params.genre,
   })
-  return await requestJson<PagedResponse<Movie>>(url)
+  return await interceptAsyncRequest('movies/fetch', async () => {
+    return await requestJson<PagedResponse<Movie>>(url)
+  })
 }
 
 export async function searchMovies(params: {
@@ -48,6 +51,8 @@ export async function searchMovies(params: {
     language: params.language,
     original_language: params.originalLanguage,
   })
-  return await requestJson<PagedResponse<Movie>>(url)
+  return await interceptAsyncRequest('movies/search', async () => {
+    return await requestJson<PagedResponse<Movie>>(url)
+  })
 }
 

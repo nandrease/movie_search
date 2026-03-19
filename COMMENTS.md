@@ -9,7 +9,7 @@ npx -y @nestjs/cli new backend --package-manager npm --skip-git
 npm create vite@latest frontend -- --template react-ts
 ```
 
-#Backend
+# Backend
 
 ## Endpoints
 - **GET `/`**: health check (`Hello World!`)
@@ -54,3 +54,8 @@ export type Movie = {
 };
 ```
 `originalTitle` and `language` are only returned when they differ from title
+
+
+# Frontend
+## Custom middleware
+Using React Query (@tanstack/react-query) therefore using custom React Context interceptor (`frontend\src\interceptors\requestInterceptor.ts`)
