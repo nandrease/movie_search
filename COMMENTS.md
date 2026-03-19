@@ -30,6 +30,11 @@ npm create vite@latest frontend -- --template react-ts
   - **examples**:
     - `/movies/search?query=batman`
     - `/movies/search?query=batman&original_language=en`
+- **GET `/movies/genres`**: official TMDB movie genres
+  - **optional query params**: `language`
+  - **examples**:
+    - `/movies/genres`
+    - `/movies/genres?language=en-US`
 
 ### Backend data transformations
 API returns movies in a paged response:
@@ -58,10 +63,29 @@ export type Movie = {
 
 # Frontend
 
-## React Query
-- Using React Query (@tanstack/react-query) not Redux store. Wanted to try React query.
+## State management
+- Using React Query (@tanstack/react-query) not Redux store. I just wanted to try React query.
 - therefore using custom React Context interceptor (`src\query\requestTiming\requestInterceptor.ts`)
+- Otherwise is state managed in MovieSearchPage and props are passed down the component tree. Decided not to use Redux to keep the application leaner as it doesn't have so much state management.
+
+## Test task implementation
+- Implemented a custom hook (`useRecentSearches`) to store recent searches in `localStorage`.
+- Open the browser developer console to view request timing logs (e.g. `movies/fetch fulfilled in 52.80ms`).
 
 ## Styling
 - Used modular css approach instead of Styled components, as I find it a bit easier to read and get a grasp of the code
 - Made sure that page looks ok with dark/light mode: prefers-color-scheme
+
+
+# Next steps
+
+- Include tests
+- Make the app full-page, like movie description apps
+- Improve mobile view to hide the search bar to free up screen space
+- Accessibility
+
+# External help
+Used ChatGPT to give me general guide for the structure of the app.
+And to find errors on code / test implementation.
+
+App is quite interesting. I'll probably keep improving it further
