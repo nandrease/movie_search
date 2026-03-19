@@ -1,157 +1,105 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Backend (NestJS)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS service that acts as a middle layer between the frontend and TMDB.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Requirements
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Node.js (LTS recommended)
+- `TMDB_API_KEY` in environment variables
 
 ## Environment
 
 Create `backend/.env` (or copy `backend/.env.example`) and set:
 
-- `TMDB_API_KEY=...`
+```env
+TMDB_API_KEY=your_tmdb_api_key
+```
+
+## Run locally
+
+```bash
+npm install
+npm run start:dev
+```
+
+Default base URL: `http://localhost:3000`
 
 ## Deployed
-- Backend (Render): <https://movie-search-tq6p.onrender.com/> (auto-deploy on push to `master`)
 
-## API endpoints
+- Render: <https://movie-search-tq6p.onrender.com/>
 
-Base URL (default): `http://localhost:3000`
+## API
 
-- **GET `/`**: health check (`Hello World!`)
-- **GET `/movies`**: popular movies (TMDB)
-  - **query params**:
-    - `page` (number)
-    - `language` (TMDB response language, e.g. `en-US`)
-    - `original_language` (filter results by original language, e.g. `en`, `ja`)
-    - `genre` (genre name like `action` or TMDB genre id like `28`)
-  - **examples**:
-    - `GET /movies`
-    - `GET /movies?page=2`
-    - `GET /movies?genre=action`
-    - `GET /movies?genre=28&original_language=ja`
-- **GET `/movies/search`**: search movies (TMDB)
-  - **required query params**: `query`
-  - **optional query params**: `page`, `language`, `original_language`
-  - **examples**:
-    - `GET /movies/search?query=batman`
-    - `GET /movies/search?query=batman&original_language=en`
+### `GET /`
 
-## Response schema
+Health check.
 
-Both `/movies` and `/movies/search` return a paged response:
+### `GET /movies`
+
+Fetches popular movies.
+
+Optional query params:
+
+- `page` (number)
+- `language` (e.g. `en-US`)
+- `original_language` (e.g. `en`, `ja`)
+- `genre` (TMDB genre name like `action` or genre id like `28`)
+
+Examples:
+
+- `/movies`
+- `/movies?page=2`
+- `/movies?genre=action`
+- `/movies?genre=28&original_language=ja`
+
+### `GET /movies/search`
+
+Searches movies by title.
+
+Query params:
+
+- required: `query`
+- optional: `page`, `language`, `original_language`
+
+Examples:
+
+- `/movies/search?query=batman`
+- `/movies/search?query=batman&original_language=en`
+
+## Response shape
+
+Both `/movies` and `/movies/search` return:
 
 ```ts
 type PagedResponse<T> = {
-  page: number;
-  results: T[];
-  totalPages: number;
-  totalResults: number;
-};
+  page: number
+  results: T[]
+  totalPages: number
+  totalResults: number
+}
 
 type Movie = {
-  id: number;
-  title: string;
-  description: string;
-  genres: string[];
-  originalTitle?: string;
-  releaseYear: number | null;
-  rating: number;
-  image: string | null;
-  language?: string;
-};
+  id: number
+  title: string
+  description: string
+  genres: string[]
+  originalTitle?: string
+  releaseYear: number | null
+  rating: number
+  image: string | null
+  language?: string
+}
 ```
 
-`originalTitle` and `language` are only returned when `originalTitle !== title`.
+## TMDB data transformation
 
-## Project setup
+The backend transforms TMDB payloads into this internal schema.
+It is not a proxy pass-through.
 
-```bash
-$ npm install
-```
+Examples:
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- `overview` -> `description`
+- `release_date` -> `releaseYear`
+- `poster_path` -> full image URL
+- `genre_ids` -> genre names
+- `originalTitle` and `language` only included when different from localized title

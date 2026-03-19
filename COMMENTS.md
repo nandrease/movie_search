@@ -1,4 +1,4 @@
-# Project structure
+# Project startup commands
 
 ## Backend
 ```
@@ -57,5 +57,11 @@ export type Movie = {
 
 
 # Frontend
-## Custom middleware
-Using React Query (@tanstack/react-query) therefore using custom React Context interceptor (`frontend\src\interceptors\requestInterceptor.ts`)
+
+## React Query
+- Using React Query (@tanstack/react-query) not Redux store. Wanted to try React query.
+- therefore using custom React Context interceptor (`src\query\requestTiming\requestInterceptor.ts`)
+
+## Styling
+- Used modular css approach instead of Styled components, as I find it a bit easier to read and get a grasp of the code
+- Made sure that page looks ok with dark/light mode: prefers-color-scheme
