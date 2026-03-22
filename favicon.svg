@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background -->
+  <rect width="64" height="64" rx="12" fill="#111827"></rect>
+
+  <!-- Film strip -->
+  <rect x="12" y="16" width="28" height="32" rx="4" fill="#374151"></rect>
+  
+  <!-- Film holes -->
+  <circle cx="16" cy="20" r="2" fill="#9CA3AF"></circle>
+  <circle cx="16" cy="28" r="2" fill="#9CA3AF"></circle>
+  <circle cx="16" cy="36" r="2" fill="#9CA3AF"></circle>
+  <circle cx="16" cy="44" r="2" fill="#9CA3AF"></circle>
+
+  <!-- Search icon -->
+  <circle cx="42" cy="42" r="8" stroke="#F9FAFB" stroke-width="3" fill="none"></circle>
+  <line x1="47" y1="47" x2="54" y2="54" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round"></line>
+</svg>
