@@ -1,49 +1,16 @@
-import type { KeyboardEvent } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import styles from './SearchFiltersForm.module.css'
 
 type FilterInputFieldProps = {
   label: string
-  name: string
-  value: string
-  placeholder: string
-  onChange: (value: string) => void
-  onEnter: () => void
-  disabled?: boolean
-  maxLength?: number
+  inputProps: ComponentPropsWithoutRef<'input'>
 }
 
-export default function FilterInputField({
-  label,
-  name,
-  value,
-  placeholder,
-  onChange,
-  onEnter,
-  disabled = false,
-  maxLength,
-}: Readonly<FilterInputFieldProps>) {
-  function handleInputKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key !== 'Enter') return
-    e.preventDefault()
-    onEnter()
-  }
-
+export default function FilterInputField({ label, inputProps }: Readonly<FilterInputFieldProps>) {
   return (
     <label className={styles.field}>
       <span>{label}</span>
-      <input
-        name={name}
-        value={value}
-        onKeyDown={handleInputKeyDown}
-        onChange={(e) => {
-          onChange(e.target.value)
-        }}
-        placeholder={placeholder}
-        disabled={disabled}
-        maxLength={maxLength}
-        autoComplete="off"
-      />
+      <input {...inputProps} autoComplete="off" />
     </label>
   )
 }
-

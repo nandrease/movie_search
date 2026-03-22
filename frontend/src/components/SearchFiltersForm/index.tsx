@@ -1,78 +1,87 @@
+import { Controller, useFormContext } from 'react-hook-form'
+import type { MovieSearchFiltersForm } from '../../search/movieSearchFilters'
 import FilterInputField from './FilterInputField'
 import FilterSelectField from './FilterSelectField'
 import styles from './SearchFiltersForm.module.css'
 
 type SearchFiltersFormProps = {
-  query: string
-  genre: string
-  originalLanguage: string
   genreSuggestions: string[]
-  onQueryChange: (value: string) => void
-  onGenreChange: (value: string) => void
-  onOriginalLanguageChange: (value: string) => void
-  onSubmit: (overrides?: Partial<{ query: string; genre: string; originalLanguage: string }>) => void
+  onFilterChange: () => void
+  onSearchSubmit: (data: MovieSearchFiltersForm) => void
 }
 
 export default function SearchFiltersForm({
-  query,
-  genre,
-  originalLanguage,
   genreSuggestions,
-  onQueryChange,
-  onGenreChange,
-  onOriginalLanguageChange,
-  onSubmit,
+  onFilterChange,
+  onSearchSubmit,
 }: Readonly<SearchFiltersFormProps>) {
+  const { control, handleSubmit, watch } = useFormContext<MovieSearchFiltersForm>()
+  const query = watch('query')
+
   return (
-    <form
-      className={styles.controls}
-      onSubmit={(e) => {
-        e.preventDefault()
-        onSubmit()
-      }}
-      onBlurCapture={(e) => {
-        const from = e.target
-        const to = e.relatedTarget
-        const isInputSwitch =
-          (from instanceof HTMLInputElement || from instanceof HTMLSelectElement) &&
-          (to instanceof HTMLInputElement || to instanceof HTMLSelectElement)
-        if (isInputSwitch) {
-          onSubmit()
-        }
-      }}
-    >
-      <FilterInputField
-        label="Search"
-        name="search"
-        value={query}
-        placeholder="Batman, Inception, ..."
-        onChange={onQueryChange}
-        onEnter={onSubmit}
+    <form className={styles.controls} onSubmit={handleSubmit(onSearchSubmit)}>
+      <Controller
+        name="query"
+        control={control}
+        render={({ field }) => (
+          <FilterInputField
+            label="Search"
+            inputProps={{
+              ...field,
+              placeholder: 'Batman, Inception, ...',
+              onChange: (e) => {
+                field.onChange(e)
+                onFilterChange()
+              },
+            }}
+          />
+        )}
       />
 
-      <FilterSelectField
-        label="Genre (popular only)"
+      <Controller
         name="genre"
-        value={genre}
-        placeholder="Select genre"
-        onChange={(value) => {
-          onGenreChange(value)
-          onSubmit({ genre: value })
-        }}
-        options={genreSuggestions}
-        disabled={query.trim().length > 0}
+        control={control}
+        render={({ field }) => (
+          <FilterSelectField
+            label="Genre (popular only)"
+            placeholder="Select genre"
+            options={genreSuggestions}
+            selectProps={{
+              ...field,
+              disabled: query.trim().length > 0,
+              onChange: (e) => {
+                field.onChange(e)
+                onFilterChange()
+              },
+            }}
+          />
+        )}
       />
 
-      <FilterInputField
-        label="Original language"
-        name="original-language"
-        value={originalLanguage}
-        placeholder="en, ja, ko..."
-        onChange={onOriginalLanguageChange}
-        onEnter={onSubmit}
-        maxLength={5}
+      <Controller
+        name="originalLanguage"
+        control={control}
+        render={({ field }) => (
+          <FilterInputField
+            label="Original language"
+            inputProps={{
+              ...field,
+              placeholder: 'en, ja, ko...',
+              maxLength: 5,
+              onChange: (e) => {
+                field.onChange(e)
+                onFilterChange()
+              },
+            }}
+          />
+        )}
       />
+
+      <div className={styles.submitWrap}>
+        <button type="submit" className={styles.searchButton}>
+          Search
+        </button>
+      </div>
     </form>
   )
 }
-

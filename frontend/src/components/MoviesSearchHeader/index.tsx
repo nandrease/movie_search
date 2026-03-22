@@ -1,28 +1,19 @@
 import SearchFiltersForm from '../SearchFiltersForm'
+import type { MovieSearchFiltersForm } from '../../search/movieSearchFilters'
 import styles from './MoviesSearchHeader.module.css'
 
 type MoviesSearchHeaderProps = {
   mode: 'search' | 'popular'
-  query: string
-  genre: string
-  originalLanguage: string
   genreSuggestions: string[]
-  onQueryChange: (value: string) => void
-  onGenreChange: (value: string) => void
-  onOriginalLanguageChange: (value: string) => void
-  onSubmit: (overrides?: Partial<{ query: string; genre: string; originalLanguage: string }>) => void
+  onFilterChange: () => void
+  onSearchSubmit: (data: MovieSearchFiltersForm) => void
 }
 
 export default function MoviesSearchHeader({
   mode,
-  query,
-  genre,
-  originalLanguage,
   genreSuggestions,
-  onQueryChange,
-  onGenreChange,
-  onOriginalLanguageChange,
-  onSubmit,
+  onFilterChange,
+  onSearchSubmit,
 }: Readonly<MoviesSearchHeaderProps>) {
   return (
     <>
@@ -33,20 +24,16 @@ export default function MoviesSearchHeader({
             ? 'Search TMDB via your Nest backend'
             : 'Browse popular movies via your Nest backend'}
         </p>
-        <small className={styles.small}>Type on the search field and press Enter to search for movies.</small>
+        <small className={styles.small}>
+          Type in the search field, then press Enter or click Search to run a search and save it to recent.
+        </small>
       </div>
 
       <SearchFiltersForm
-        query={query}
-        genre={genre}
-        originalLanguage={originalLanguage}
         genreSuggestions={genreSuggestions}
-        onQueryChange={onQueryChange}
-        onGenreChange={onGenreChange}
-        onOriginalLanguageChange={onOriginalLanguageChange}
-        onSubmit={onSubmit}
+        onFilterChange={onFilterChange}
+        onSearchSubmit={onSearchSubmit}
       />
     </>
   )
 }
-

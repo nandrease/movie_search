@@ -1,52 +1,51 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import MoviesSearchHeader from '../components/MoviesSearchHeader'
 import MoviesSearchMetaBar from '../components/MoviesSearchMetaBar'
 import MoviesResultsGrid from '../components/MoviesResultsGrid'
 import RecentSearchesSidebar from '../components/RecentSearchesSidebar'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { useRecentSearches } from '../hooks/useRecentSearches'
+import {
+  defaultMovieSearchFilters,
+  type MovieSearchFiltersForm,
+} from '../search/movieSearchFilters'
 import { useMovieGenresQuery } from '../query/useMovieGenresQuery'
 import { useMoviesQuery } from '../query/useMoviesQuery'
 import styles from './MoviesSearchPage.module.css'
 
 export default function MoviesSearchPage() {
-  const [query, setQuery] = useState('')
-  const [genre, setGenre] = useState('')
-  const [originalLanguage, setOriginalLanguage] = useState('')
-  const [appliedFilters, setAppliedFilters] = useState({
-    query: '',
-    genre: '',
-    originalLanguage: '',
+  const form = useForm<MovieSearchFiltersForm>({
+    defaultValues: defaultMovieSearchFilters,
   })
+
+  const query = useWatch({ control: form.control, name: 'query' })
+  const genre = useWatch({ control: form.control, name: 'genre' })
+  const originalLanguage = useWatch({ control: form.control, name: 'originalLanguage' })
+
   const [page, setPage] = useState(1)
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null)
+
   const { items: recentSearches, push: pushRecentSearch, clear: clearRecentSearches } =
     useRecentSearches('movie-search:recent-searches', 5)
 
-  const mode = appliedFilters.query.trim() ? 'search' : 'popular'
-  const effectiveQuery = useMemo(() => appliedFilters.query.trim(), [appliedFilters.query])
-  const effectiveGenre = useMemo(() => appliedFilters.genre.trim() || undefined, [appliedFilters.genre])
-  const effectiveOriginalLanguage = useMemo(
-    () => appliedFilters.originalLanguage.trim() || undefined,
-    [appliedFilters.originalLanguage],
-  )
+  const debouncedQuery = useDebouncedValue(query, 400)
+  const effectiveQuery = useMemo(() => debouncedQuery.trim(), [debouncedQuery])
+  const mode = effectiveQuery ? 'search' : 'popular'
+  const effectiveGenre = genre.trim() || undefined
+  const effectiveOriginalLanguage = originalLanguage.trim() || undefined
 
-  useEffect(() => {
-    if (!effectiveQuery) return
-    pushRecentSearch(effectiveQuery)
-  }, [effectiveQuery, pushRecentSearch])
-
-  function applyFilters(overrides?: Partial<{ query: string; genre: string; originalLanguage: string }>) {
-    const nextQuery = overrides?.query ?? query
-    const nextGenre = overrides?.genre ?? genre
-    const nextOriginalLanguage = overrides?.originalLanguage ?? originalLanguage
-
+  function resetPageForFilterChange() {
     setPage(1)
-    setAppliedFilters({
-      query: nextQuery,
-      genre: nextGenre,
-      originalLanguage: nextOriginalLanguage,
-    })
   }
+
+  const handleSearchSubmit = useCallback(
+    (data: MovieSearchFiltersForm) => {
+      const trimmed = data.query.trim()
+      if (trimmed) pushRecentSearch(trimmed)
+    },
+    [pushRecentSearch],
+  )
 
   const q = useMoviesQuery({
     mode,
@@ -76,74 +75,59 @@ export default function MoviesSearchPage() {
   }, [mode, q.isFetching])
 
   return (
-    <div className={styles.app}>
-      <header className={styles.header}>
-        <MoviesSearchHeader
-          mode={mode}
-          query={query}
-          genre={genre}
-          originalLanguage={originalLanguage}
-          genreSuggestions={(genresQuery.data ?? []).map((genreItem) => genreItem.name)}
-          onQueryChange={setQuery}
-          onGenreChange={setGenre}
-          onOriginalLanguageChange={setOriginalLanguage}
-          onSubmit={applyFilters}
-        />
+    <FormProvider {...form}>
+      <div className={styles.app}>
+        <header className={styles.header}>
+          <MoviesSearchHeader
+            mode={mode}
+            genreSuggestions={(genresQuery.data ?? []).map((genreItem) => genreItem.name)}
+            onFilterChange={resetPageForFilterChange}
+            onSearchSubmit={handleSearchSubmit}
+          />
 
-        <MoviesSearchMetaBar
-          resultsLabel={resultsLabel}
-          currentPage={data?.page}
-          isError={q.isError}
-          canPrev={canPrev}
-          canNext={canNext}
-          isFetching={q.isFetching}
-          onPrev={() => setPage((p) => Math.max(1, p - 1))}
-          onNext={() => setPage((p) => p + 1)}
-          onReset={() => {
-            setQuery('')
-            setGenre('')
-            setOriginalLanguage('')
-            setPage(1)
-            setAppliedFilters({
-              query: '',
-              genre: '',
-              originalLanguage: '',
-            })
-            setActiveMovieId(null)
-          }}
-        />
-      </header>
+          <MoviesSearchMetaBar
+            resultsLabel={resultsLabel}
+            currentPage={data?.page}
+            isError={q.isError}
+            canPrev={canPrev}
+            canNext={canNext}
+            isFetching={q.isFetching}
+            onPrev={() => setPage((p) => Math.max(1, p - 1))}
+            onNext={() => setPage((p) => p + 1)}
+            onReset={() => {
+              form.reset(defaultMovieSearchFilters)
+              setPage(1)
+              setActiveMovieId(null)
+            }}
+          />
+        </header>
 
-      {q.isError ? (
-        <div className={styles.errorBox}>
-          {q.error instanceof Error ? q.error.message : 'Request failed'}
+        {q.isError ? (
+          <div className={styles.errorBox}>
+            {q.error instanceof Error ? q.error.message : 'Request failed'}
+          </div>
+        ) : null}
+
+        <div className={styles.content}>
+          <RecentSearchesSidebar
+            items={recentSearches}
+            onClear={clearRecentSearches}
+            onApply={(term) => {
+              form.setValue('query', term, { shouldDirty: true })
+              setPage(1)
+            }}
+          />
+
+          <MoviesResultsGrid
+            results={results}
+            activeMovieId={activeMovieId}
+            emptyLabel={emptyLabel}
+            onToggleMovie={(movieId) => {
+              setActiveMovieId((cur) => (cur === movieId ? null : movieId))
+            }}
+          />
         </div>
-      ) : null}
-
-      <div className={styles.content}>
-        <RecentSearchesSidebar
-          items={recentSearches}
-          onClear={clearRecentSearches}
-          onApply={(term) => {
-            setQuery(term)
-            setPage(1)
-            setAppliedFilters((prev) => ({
-              ...prev,
-              query: term,
-            }))
-          }}
-        />
-
-        <MoviesResultsGrid
-          results={results}
-          activeMovieId={activeMovieId}
-          emptyLabel={emptyLabel}
-          onToggleMovie={(movieId) => {
-            setActiveMovieId((cur) => (cur === movieId ? null : movieId))
-          }}
-        />
       </div>
-    </div>
+    </FormProvider>
   )
 }
-

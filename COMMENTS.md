@@ -76,6 +76,8 @@ export type Movie = {
 - Used modular css approach instead of Styled components, as I find it a bit easier to read and get a grasp of the code
 - Made sure that page looks ok with dark/light mode: prefers-color-scheme
 
+## Search
+- using react-hook-form to eliminated duplicated state and keep separated search suggestions and recent searches. Recent searches are updated only when user submits SearchFilters Form.
 
 # Next steps
 
