@@ -88,6 +88,6 @@ export type Movie = {
 
 # External help
 Used ChatGPT to give me general guide for the structure of the app.
-Use Copilot for code review in master branch.
+Use Copilot for code review and optimizations.
 
 App is quite interesting. I'll probably keep improving it further
