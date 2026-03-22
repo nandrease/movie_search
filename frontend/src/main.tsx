@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import { queryClient } from './query/queryClient'
 import { RequestTimingProvider } from './query/requestTiming/RequestTimingProvider'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <RequestTimingProvider>
         <App />
       </RequestTimingProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </StrictMode>,
 )

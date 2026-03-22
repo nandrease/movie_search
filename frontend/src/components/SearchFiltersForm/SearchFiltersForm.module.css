@@ -1,7 +1,34 @@
 .controls {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr auto;
   gap: 12px;
+  align-items: end;
+}
+
+.submitWrap {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 2px;
+}
+
+.searchButton {
+  font: 600 15px/1.2 var(--sans);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--text-h);
+  color: var(--bg);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.searchButton:hover {
+  filter: brightness(1.05);
+}
+
+.searchButton:focus-visible {
+  outline: 2px solid var(--text-h);
+  outline-offset: 2px;
 }
 
 .field {
@@ -33,6 +60,14 @@
 @media (max-width: 1024px) {
   .controls {
     grid-template-columns: 1fr;
+  }
+
+  .submitWrap {
+    justify-content: stretch;
+  }
+
+  .searchButton {
+    width: 100%;
   }
 }
 

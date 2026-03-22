@@ -1,35 +1,23 @@
+import type { ComponentPropsWithoutRef } from 'react'
 import styles from './SearchFiltersForm.module.css'
 
 type FilterSelectFieldProps = {
   label: string
-  name: string
-  value: string
-  onChange: (value: string) => void
   options: string[]
   placeholder: string
-  disabled?: boolean
+  selectProps: ComponentPropsWithoutRef<'select'>
 }
 
 export default function FilterSelectField({
   label,
-  name,
-  value,
-  onChange,
   options,
   placeholder,
-  disabled = false,
+  selectProps,
 }: Readonly<FilterSelectFieldProps>) {
   return (
     <label className={styles.field}>
       <span>{label}</span>
-      <select
-        name={name}
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value)
-        }}
-        disabled={disabled}
-      >
+      <select {...selectProps}>
         <option value="">{placeholder}</option>
         {options.map((item) => (
           <option key={item} value={item}>
@@ -40,4 +28,3 @@ export default function FilterSelectField({
     </label>
   )
 }
-
