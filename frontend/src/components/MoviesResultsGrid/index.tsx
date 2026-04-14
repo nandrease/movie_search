@@ -6,7 +6,7 @@ type MoviesResultsGridProps = {
   results: Movie[]
   activeMovieId: number | null
   emptyLabel: string
-  onToggleMovie: (movieId: number) => void
+  onToggleMovie: (movieId?: number) => void
 }
 
 export default function MoviesResultsGrid({
@@ -23,7 +23,7 @@ export default function MoviesResultsGrid({
             key={m.id}
             movie={m}
             active={activeMovieId === m.id}
-            onToggle={() => onToggleMovie(m.id)}
+            onToggle={(movieId) => onToggleMovie(movieId ?? m.id)}
           />
         ))
       ) : (

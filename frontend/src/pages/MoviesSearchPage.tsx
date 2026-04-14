@@ -123,6 +123,10 @@ export default function MoviesSearchPage() {
             activeMovieId={activeMovieId}
             emptyLabel={emptyLabel}
             onToggleMovie={(movieId) => {
+              if (movieId === undefined) {
+                setActiveMovieId(null)
+                return
+              }
               setActiveMovieId((cur) => (cur === movieId ? null : movieId))
             }}
           />

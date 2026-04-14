@@ -4,7 +4,7 @@ import styles from './MovieCard.module.css'
 export type MovieCardProps = {
   movie: Movie
   active: boolean
-  onToggle: () => void
+  onToggle: (movieId?: number) => void
 }
 
 export default function MovieCard({
@@ -16,7 +16,10 @@ export default function MovieCard({
     <button
       type="button"
       className={[styles.card, active ? styles.expanded : ''].join(' ').trim()}
-      onClick={onToggle}
+      onClick={() => onToggle(movie.id)}
+      onBlur={() => {
+        if (active) onToggle()
+      }}
       aria-expanded={active}
     >
       <div className={styles.poster}>
