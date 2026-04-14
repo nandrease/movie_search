@@ -109,27 +109,31 @@ export default function MoviesSearchPage() {
         ) : null}
 
         <div className={styles.content}>
-          <RecentSearchesSidebar
-            items={recentSearches}
-            onClear={clearRecentSearches}
-            onApply={(term) => {
-              form.setValue('query', term, { shouldDirty: true })
-              setPage(1)
-            }}
-          />
+          <div className={styles.resultsCol}>
+            <MoviesResultsGrid
+              results={results}
+              activeMovieId={activeMovieId}
+              emptyLabel={emptyLabel}
+              onToggleMovie={(movieId) => {
+                if (movieId === undefined) {
+                  setActiveMovieId(null)
+                  return
+                }
+                setActiveMovieId((cur) => (cur === movieId ? null : movieId))
+              }}
+            />
+          </div>
 
-          <MoviesResultsGrid
-            results={results}
-            activeMovieId={activeMovieId}
-            emptyLabel={emptyLabel}
-            onToggleMovie={(movieId) => {
-              if (movieId === undefined) {
-                setActiveMovieId(null)
-                return
-              }
-              setActiveMovieId((cur) => (cur === movieId ? null : movieId))
-            }}
-          />
+          <div className={styles.sidebarCol}>
+            <RecentSearchesSidebar
+              items={recentSearches}
+              onClear={clearRecentSearches}
+              onApply={(term) => {
+                form.setValue('query', term, { shouldDirty: true })
+                setPage(1)
+              }}
+            />
+          </div>
         </div>
       </div>
     </FormProvider>

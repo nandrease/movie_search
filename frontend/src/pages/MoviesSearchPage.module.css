@@ -29,6 +29,15 @@
   align-items: start;
 }
 
+.resultsCol {
+  grid-column: 2;
+}
+
+.sidebarCol {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 @media (max-width: 1024px) {
   .app {
     padding: 20px;
@@ -36,6 +45,12 @@
 
   .content {
     grid-template-columns: 1fr;
+  }
+
+  .resultsCol,
+  .sidebarCol {
+    grid-column: auto;
+    grid-row: auto;
   }
 }
 
