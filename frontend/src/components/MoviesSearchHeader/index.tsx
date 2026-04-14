@@ -21,8 +21,8 @@ export default function MoviesSearchHeader({
         <h1>Movie Search</h1>
         <p className={styles.subtitle}>
           {mode === 'search'
-            ? 'Search TMDB via your Nest backend'
-            : 'Browse popular movies via your Nest backend'}
+            ? 'Search TMDB via our Nest backend'
+            : 'Browse popular movies from TMDB via our Nest backend'}
         </p>
         <small className={styles.small}>
           Type in the search field, then press Enter or click Search to run a search and save it to search history.
