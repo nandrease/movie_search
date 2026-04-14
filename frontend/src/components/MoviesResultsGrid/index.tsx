@@ -1,4 +1,5 @@
 import type { Movie } from '../../query/api/types'
+import { useMovieGridKeyboardNavigation } from '../../hooks/useMovieGridKeyboardNavigation'
 import MovieCard from '../MovieCard'
 import styles from './MoviesResultsGrid.module.css'
 
@@ -15,14 +16,18 @@ export default function MoviesResultsGrid({
   emptyLabel,
   onToggleMovie,
 }: Readonly<MoviesResultsGridProps>) {
+  const { gridRef, onCardKeyDown } = useMovieGridKeyboardNavigation()
+
   return (
-    <main className={styles.grid}>
+    <main ref={gridRef} className={styles.grid}>
       {results.length ? (
-        results.map((m) => (
+        results.map((m, index) => (
           <MovieCard
             key={m.id}
             movie={m}
             active={activeMovieId === m.id}
+            cardIndex={index}
+            onCardKeyDown={onCardKeyDown}
             onToggle={(movieId) => onToggleMovie(movieId ?? m.id)}
           />
         ))

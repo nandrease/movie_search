@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from 'react'
 import type { Movie } from '../../query/api/types'
 import styles from './MovieCard.module.css'
 
@@ -5,18 +6,24 @@ export type MovieCardProps = {
   movie: Movie
   active: boolean
   onToggle: (movieId?: number) => void
+  cardIndex: number
+  onCardKeyDown: (event: KeyboardEvent<HTMLButtonElement>, cardIndex: number) => void
 }
 
 export default function MovieCard({
   movie,
   active,
   onToggle,
+  cardIndex,
+  onCardKeyDown,
 }: Readonly<MovieCardProps>) {
   return (
     <button
       type="button"
       className={[styles.card, active ? styles.expanded : ''].join(' ').trim()}
+      data-movie-card-index={cardIndex}
       onClick={() => onToggle(movie.id)}
+      onKeyDown={(event) => onCardKeyDown(event, cardIndex)}
       onBlur={() => {
         if (active) onToggle()
       }}
