@@ -45,6 +45,8 @@
 .field input,
 .field select {
   font: 16px/1.2 var(--sans);
+  box-sizing: border-box;
+  height: 44px;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
