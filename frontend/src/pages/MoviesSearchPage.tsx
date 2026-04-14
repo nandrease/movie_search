@@ -57,12 +57,14 @@ export default function MoviesSearchPage() {
 
   useEffect(() => {
     if (!q.hasNextPage) return
+    if (results.length <= 1) return
     const target = loadMoreRef.current
     if (!target) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting) return
+        if (!q.hasNextPage) return
         if (q.isFetchingNextPage) return
         q.fetchNextPage()
       },
@@ -71,7 +73,7 @@ export default function MoviesSearchPage() {
 
     observer.observe(target)
     return () => observer.disconnect()
-  }, [q])
+  }, [q, results.length])
 
   const resultsLabel = useMemo(() => {
     if (q.isFetching) return 'Loading…'
