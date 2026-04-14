@@ -32,7 +32,25 @@ Default base URL: `http://localhost:3000`
 
 ### `GET /`
 
-Health check.
+API landing info (service metadata + useful links).
+
+### `GET /health`
+
+Health status endpoint.
+
+Returns:
+
+- `status`
+- `uptimeSeconds`
+- `timestamp`
+
+### `GET /docs`
+
+Swagger UI for interactive API exploration.
+
+### `GET /docs-json`
+
+OpenAPI schema JSON.
 
 ### `GET /movies`
 

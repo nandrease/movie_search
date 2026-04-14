@@ -12,7 +12,10 @@ npm create vite@latest frontend -- --template react-ts
 # Backend
 
 ## Endpoints
-- **GET `/`**: health check (`Hello World!`)
+- **GET `/`**: API landing info (service metadata + useful links)
+- **GET `/health`**: backend health status (`status`, `uptimeSeconds`, `timestamp`)
+- **GET `/docs`**: Swagger UI
+- **GET `/docs-json`**: OpenAPI schema JSON
 - **GET `/movies`**: popular movies (TMDB)
   - **query params**:
     - `page` (number)
@@ -75,6 +78,8 @@ export type Movie = {
 ## Styling
 - Used modular css approach instead of Styled components, as I find it a bit easier to read and get a grasp of the code
 - Made sure that page looks ok with dark/light mode: prefers-color-scheme
+- Used Netflix like experience with arrow navigation and full screen view
+- Used infinite scroll from React Query for better UX
 
 ## Search
 - using react-hook-form to eliminated duplicated state and keep separated search suggestions and recent searches. Recent searches are updated only when user submits SearchFilters Form.
@@ -82,7 +87,6 @@ export type Movie = {
 # Next steps
 
 - Include tests
-- Make the app full-page, like movie description apps
 - Improve mobile view to hide the search bar to free up screen space
 - Accessibility
 

@@ -12,7 +12,7 @@
 - `frontend/`: React (Vite) app
 
 ## Deployed
-- Backend (Render): https://movie-search-tq6p.onrender.com/ (auto-deploy on push to `master`)
+- Backend (Render): https://movie-search-tq6p.onrender.com/ (manual deploy)
 - Frontend (GitHub Pages): https://nandrease.github.io/movie_search/ (auto-deploy on push to `master`)
 
 ### Frontend notes (GitHub Pages)

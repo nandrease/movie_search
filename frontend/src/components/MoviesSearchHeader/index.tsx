@@ -25,7 +25,7 @@ export default function MoviesSearchHeader({
             : 'Browse popular movies via your Nest backend'}
         </p>
         <small className={styles.small}>
-          Type in the search field, then press Enter or click Search to run a search and save it to recent.
+          Type in the search field, then press Enter or click Search to run a search and save it to search history.
         </small>
       </div>
 
