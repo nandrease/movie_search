@@ -1,17 +1,19 @@
 .controls {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: 1fr;
   gap: 12px;
   align-items: end;
 }
 
 .submitWrap {
   display: flex;
+  justify-content: stretch;
   align-items: flex-end;
   padding-bottom: 2px;
 }
 
 .searchButton {
+  width: 100%;
   font: 600 15px/1.2 var(--sans);
   padding: 10px 20px;
   border-radius: 10px;
@@ -59,17 +61,17 @@
   opacity: 0.3;
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 1024px) {
   .controls {
-    grid-template-columns: 1fr;
+    grid-template-columns: 2fr 1fr 1fr auto;
   }
 
   .submitWrap {
-    justify-content: stretch;
+    justify-content: flex-end;
   }
 
   .searchButton {
-    width: 100%;
+    width: auto;
   }
 }
 

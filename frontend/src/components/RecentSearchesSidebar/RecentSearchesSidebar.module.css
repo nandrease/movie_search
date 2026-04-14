@@ -3,7 +3,6 @@
   border-radius: 12px;
   padding: 12px;
   background: var(--bg);
-  position: sticky;
   top: 12px;
 }
 
@@ -70,9 +69,9 @@
   color: var(--text);
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 1024px) {
   .sidebar {
-    position: static;
+    position: sticky;
   }
 }
 

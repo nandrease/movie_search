@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 28px 28px 40px;
+  padding: 20px;
 }
 
 .header {
@@ -24,13 +24,19 @@
 
 .content {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 1fr;
   gap: 14px;
   align-items: start;
 }
 
-.resultsCol {
-  grid-column: 2;
+.resultsCol,
+.sidebarCol {
+  grid-column: auto;
+  grid-row: auto;
+}
+
+.sidebarCol {
+  grid-row: 1;
 }
 
 .loadMoreTrigger {
@@ -38,24 +44,22 @@
   height: 1px;
 }
 
-.sidebarCol {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-@media (max-width: 1024px) {
+@media (min-width: 1024px) {
   .app {
-    padding: 20px;
+    padding: 28px 28px 40px;
   }
 
   .content {
-    grid-template-columns: 1fr;
+    grid-template-columns: 260px 1fr;
   }
 
-  .resultsCol,
   .sidebarCol {
-    grid-column: auto;
-    grid-row: auto;
+    grid-column: 1;
+  }
+
+  .resultsCol {
+    grid-column: 2;
+    grid-row: 1;
   }
 }
 
