@@ -7,6 +7,8 @@ type MoviesResultsGridProps = {
   results: Movie[]
   activeMovieId: number | null
   emptyLabel: string
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
   onToggleMovie: (movieId?: number) => void
 }
 
@@ -14,6 +16,8 @@ export default function MoviesResultsGrid({
   results,
   activeMovieId,
   emptyLabel,
+  isFetchingNextPage,
+  hasNextPage,
   onToggleMovie,
 }: Readonly<MoviesResultsGridProps>) {
   const { gridRef, onCardKeyDown } = useMovieGridKeyboardNavigation()
@@ -34,6 +38,13 @@ export default function MoviesResultsGrid({
       ) : (
         <div className={styles.empty}>{emptyLabel}</div>
       )}
+
+      {results.length > 0 && isFetchingNextPage ? (
+        <div className={styles.fetchingMore}>Loading more movies…</div>
+      ) : null}
+      {results.length > 0 && !hasNextPage ? (
+        <div className={styles.fetchingMore}>End of results</div>
+      ) : null}
     </main>
   )
 }

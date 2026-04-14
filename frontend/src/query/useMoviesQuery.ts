@@ -1,10 +1,10 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchMovies, searchMovies } from './api/movies'
+import type { PagedResponse, Movie } from './api/types'
 
 type UseMoviesQueryParams = {
   mode: 'search' | 'popular'
   query: string
-  page: number
   genre?: string
   originalLanguage?: string
 }
@@ -12,37 +12,38 @@ type UseMoviesQueryParams = {
 export function useMoviesQuery({
   mode,
   query,
-  page,
   genre,
   originalLanguage,
 }: UseMoviesQueryParams) {
-  return useQuery({
+  return useInfiniteQuery<PagedResponse<Movie>>({
     queryKey: [
       'movies',
       {
         mode,
         query,
-        page,
         genre,
         original_language: originalLanguage,
       },
     ],
-    queryFn: async () => {
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const page = pageParam
       if (mode === 'search') {
         return await searchMovies({
           query,
-          page,
+          page: page ? Number(page) : undefined,
           originalLanguage,
         })
       }
 
       return await fetchMovies({
-        page,
+        page: page ? Number(page) : undefined,
         genre,
         originalLanguage,
       })
     },
-    placeholderData: keepPreviousData,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
     staleTime: 10_000,
   })
 }

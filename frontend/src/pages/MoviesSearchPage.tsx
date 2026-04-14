@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import MoviesSearchHeader from '../components/MoviesSearchHeader'
 import MoviesSearchMetaBar from '../components/MoviesSearchMetaBar'
@@ -23,8 +23,8 @@ export default function MoviesSearchPage() {
   const genre = useWatch({ control: form.control, name: 'genre' })
   const originalLanguage = useWatch({ control: form.control, name: 'originalLanguage' })
 
-  const [page, setPage] = useState(1)
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   const { items: recentSearches, push: pushRecentSearch, clear: clearRecentSearches } =
     useRecentSearches('movie-search:recent-searches', 5)
@@ -34,10 +34,6 @@ export default function MoviesSearchPage() {
   const mode = effectiveQuery ? 'search' : 'popular'
   const effectiveGenre = genre.trim() || undefined
   const effectiveOriginalLanguage = originalLanguage.trim() || undefined
-
-  function resetPageForFilterChange() {
-    setPage(1)
-  }
 
   const handleSearchSubmit = useCallback(
     (data: MovieSearchFiltersForm) => {
@@ -50,23 +46,39 @@ export default function MoviesSearchPage() {
   const q = useMoviesQuery({
     mode,
     query: effectiveQuery,
-    page,
     genre: effectiveGenre,
     originalLanguage: effectiveOriginalLanguage,
   })
   const genresQuery = useMovieGenresQuery()
 
-  const data = q.data
-  const results = data?.results ?? []
-  const canPrev = page > 1 && !q.isFetching
-  const canNext = !!data && page < data.totalPages && !q.isFetching
+  const pages = useMemo(() => q.data?.pages ?? [], [q.data?.pages])
+  const lastPage = pages.at(-1)
+  const results = useMemo(() => pages.flatMap((pageItem) => pageItem.results), [pages])
+
+  useEffect(() => {
+    if (!q.hasNextPage) return
+    const target = loadMoreRef.current
+    if (!target) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return
+        if (q.isFetchingNextPage) return
+        q.fetchNextPage()
+      },
+      { rootMargin: '360px 0px' },
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [q])
 
   const resultsLabel = useMemo(() => {
     if (q.isFetching) return 'Loading…'
     if (q.isError) return 'Error'
-    if (!data) return '—'
-    return `${data.totalResults.toLocaleString()} results`
-  }, [data, q.isError, q.isFetching])
+    if (!lastPage) return '—'
+    return `${lastPage.totalResults.toLocaleString()} results`
+  }, [lastPage, q.isError, q.isFetching])
 
   const emptyLabel = useMemo(() => {
     if (q.isFetching) return 'Loading movies…'
@@ -81,22 +93,17 @@ export default function MoviesSearchPage() {
           <MoviesSearchHeader
             mode={mode}
             genreSuggestions={(genresQuery.data ?? []).map((genreItem) => genreItem.name)}
-            onFilterChange={resetPageForFilterChange}
+            onFilterChange={() => setActiveMovieId(null)}
             onSearchSubmit={handleSearchSubmit}
           />
 
           <MoviesSearchMetaBar
             resultsLabel={resultsLabel}
-            currentPage={data?.page}
+            loadedPages={pages.length || undefined}
             isError={q.isError}
-            canPrev={canPrev}
-            canNext={canNext}
             isFetching={q.isFetching}
-            onPrev={() => setPage((p) => Math.max(1, p - 1))}
-            onNext={() => setPage((p) => p + 1)}
             onReset={() => {
               form.reset(defaultMovieSearchFilters)
-              setPage(1)
               setActiveMovieId(null)
             }}
           />
@@ -114,6 +121,8 @@ export default function MoviesSearchPage() {
               results={results}
               activeMovieId={activeMovieId}
               emptyLabel={emptyLabel}
+              isFetchingNextPage={q.isFetchingNextPage}
+              hasNextPage={!!q.hasNextPage}
               onToggleMovie={(movieId) => {
                 if (movieId === undefined) {
                   setActiveMovieId(null)
@@ -122,6 +131,7 @@ export default function MoviesSearchPage() {
                 setActiveMovieId((cur) => (cur === movieId ? null : movieId))
               }}
             />
+            <div ref={loadMoreRef} className={styles.loadMoreTrigger} aria-hidden />
           </div>
 
           <div className={styles.sidebarCol}>
@@ -130,7 +140,7 @@ export default function MoviesSearchPage() {
               onClear={clearRecentSearches}
               onApply={(term) => {
                 form.setValue('query', term, { shouldDirty: true })
-                setPage(1)
+                setActiveMovieId(null)
               }}
             />
           </div>
