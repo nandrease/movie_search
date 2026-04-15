@@ -20,6 +20,29 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect({
+        name: 'movie-search-backend',
+        version: '0.0.1',
+        environment: process.env.NODE_ENV ?? 'development',
+        docs: '/docs',
+        schema: '/docs-json',
+        health: '/health',
+        endpoints: {
+          movies: '/movies',
+          search: '/movies/search?query=batman',
+          genres: '/movies/genres',
+        },
+      });
+  });
+
+  it('/health (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/health')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.status).toBe('ok');
+        expect(typeof res.body.uptimeSeconds).toBe('number');
+        expect(typeof res.body.timestamp).toBe('string');
+      });
   });
 });

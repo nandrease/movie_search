@@ -15,8 +15,20 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return API root information', () => {
+      expect(appController.getRootInfo()).toEqual({
+        name: 'movie-search-backend',
+        version: '0.0.1',
+        environment: process.env.NODE_ENV ?? 'development',
+        docs: '/docs',
+        schema: '/docs-json',
+        health: '/health',
+        endpoints: {
+          movies: '/movies',
+          search: '/movies/search?query=batman',
+          genres: '/movies/genres',
+        },
+      });
     });
   });
 });
