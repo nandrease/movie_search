@@ -39,10 +39,14 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/health')
       .expect(200)
-      .expect((res) => {
-        expect(res.body.status).toBe('ok');
-        expect(typeof res.body.uptimeSeconds).toBe('number');
-        expect(typeof res.body.timestamp).toBe('string');
-      });
+      .expect(
+        (res: {
+          body: { status: string; uptimeSeconds: number; timestamp: string };
+        }) => {
+          expect(res.body.status).toBe('ok');
+          expect(typeof res.body.uptimeSeconds).toBe('number');
+          expect(typeof res.body.timestamp).toBe('string');
+        },
+      );
   });
 });
